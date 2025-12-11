@@ -1,0 +1,4 @@
+.vscode/
+app/libs/imgui/
+**/bin/
+**/build/
