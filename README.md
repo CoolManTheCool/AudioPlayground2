@@ -1,26 +1,27 @@
-# Nuclear Inc.
+# Audio Playground 2
 
 ## Description
-The nuclear reactor simulator designed to be accurate, while not totally boring you with tons of small details.
+Simple Synth written in C++. Though it's small, there is more importance in how you use it. The goal is to add features until it's capable of taking a midi input (or multiple) and produce high quality real time sounds.
 
 ## Installation
-```bash
-# Add installation steps here
-```
+1. Download
+2. Build
+3. Install
 
 ## Usage
-```bash
-# Add usage examples here
-```
+1. Launch application
+2. select midi device
+3. select configuration (or make your own)
+4. play music
 
 ## Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+If you want to contribute, I would greatly appreciate it. Ideally get in touch via email, issues or any of my socials.
 
 ## License
 This project is licensed under the [LICENSE.md](LICENSE.md) file for details.
 
 ## Authors
-* **Your Name** - *Initial work*
+* **Noah Grimes** - *Initial work*
 
 ## Acknowledgments
-* List any inspirations, code snippets, etc.
+- imgui-knobs
