@@ -11,6 +11,7 @@ include_directories(${GLFW_INCLUDE_DIRS})
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(RTAUDIO REQUIRED rtaudio)
+pkg_check_modules(RTMIDI REQUIRED rtmidi)
 
 # Find OpenAL | Disabled, as not used.
 #find_package(OpenAL REQUIRED)
@@ -52,9 +53,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/
     libs/
 )
-target_include_directories(${PROJECT_NAME} PRIVATE ${RTAUDIO_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${RTAUDIO_INCLUDE_DIRS} ${RTMIDI_INCLUDE_DIRS})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENAL_LIBRARY} glfw imgui OpenGL::GL ${RTAUDIO_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENAL_LIBRARY} glfw imgui OpenGL::GL ${RTAUDIO_LIBRARIES} ${RTMIDI_LIBRARIES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 target_compile_options(${PROJECT_NAME} PRIVATE ${RTAUDIO_CFLAGS_OTHER})

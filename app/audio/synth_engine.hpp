@@ -2,6 +2,10 @@
 
 #include <atomic>
 #include <vector>
+#include <array>
+#include <cmath>
+
+#include "RtMidi.h"
 
 #define RELAXED std::memory_order_relaxed
 
@@ -35,19 +39,28 @@ public:
     void render();
 };
 
-class NOscillator {
+class Voice {
 public:
-    NOscillator(int size);
-    void render();
-
-    float process(float frequency);
-
-    std::atomic<float> gain = 0.5f;
-private:
-    std::atomic<bool> mute = true;
+    virtual void render() = 0;
+    virtual float process() = 0;
     std::atomic<bool> soloist = false;
+    std::atomic<bool> mute = true;
+    std::atomic<float> gain = 0.5f;
+
+    void noteOn(int note);
+    void noteOff();
+
+protected:
     bool editing = true;
     std::atomic<float> frequency = 440.0f;
+};
+
+class NOscillator : public Voice {
+public:
+    NOscillator(int size);
+    void render() override;
+    float process() override;
+private:
     std::vector<Oscillator> oscillators;
 };
 
@@ -57,7 +70,21 @@ struct SynthEngine {
 
     NOscillator nOscillator{3};
 
+    void noteOn(int midiNote, float velocity) {
+        nOscillator.noteOn(midiNote);
+    }
+
+    void noteOff(int midiNote) {
+        nOscillator.noteOff();
+    }
+
     void render();
+    void refreshMidiMapping();
+
+    std::vector<std::string> midiMapping;
+    int currentMidiPort = -1;
 
     int process(float* out, unsigned int nFrames);
+
+    RtMidiIn* midiIn;
 };

@@ -1,6 +1,7 @@
 #include "synth_engine.hpp"
 
 #include <cmath>
+#include <iostream>
 
 #include "imgui.h"
 #include "imgui-knobs.hpp"
@@ -12,6 +13,9 @@ Oscillator::Oscillator(float offset, float gain) {
 }
 
 float Oscillator::process(float frequency) {
+    if(gain.load(RELAXED) == 0.0f) {
+        return 0.0f;
+    }
     // Simple sine wave oscillator
     float freq = offset.load(RELAXED) + frequency;
     float g = gain.load(RELAXED);
@@ -24,13 +28,13 @@ float Oscillator::process(float frequency) {
     return sample;
 }
 
-float NOscillator::process(float frequency) {
+float NOscillator::process() {
     if(mute.load(RELAXED)) {
         return 0.0f;
     }
     float mixedSample = 0.0f;
     for (auto& osc : oscillators) {
-        mixedSample += osc.process(frequency);
+        mixedSample += osc.process(frequency.load(RELAXED));
     }
     //mixedSample /= static_cast<float>(oscillators.size()); // Normalize
     return mixedSample * gain.load(RELAXED);
@@ -41,7 +45,7 @@ int SynthEngine::process(float* out, unsigned int nFrames) {
     for (unsigned int i = 0; i < nFrames; i++) {
 
 
-        float sample = nOscillator.process(440.0f);
+        float sample = nOscillator.process();
 
         out[i * 2 + 0] = sample * gain.load(RELAXED); // L
         out[i * 2 + 1] = sample * gain.load(RELAXED); // R
@@ -50,14 +54,24 @@ int SynthEngine::process(float* out, unsigned int nFrames) {
     return 0;
 };
 
+void Voice::noteOn(int note) {
+    float freq = 440.0f * std::pow(2.0f, (note - 69) / 12.0f);
+    this->frequency.store(freq, RELAXED);
+
+    mute.store(false, RELAXED);
+}
+
+void Voice::noteOff() {
+    mute.store(true, RELAXED);
+}
+
 NOscillator::NOscillator(int size) {
     float root = 440.0f;
 
     oscillators.reserve(size);
     for (int i = 0; i < size; ++i) {
-        float harmonic = i;                 // 1, 2, 3, ...
-        float freq = root * harmonic;             // harmonic frequency
-        float amp = 1.0f / (i + 3);                  // your amplitude choice
+        float freq = root * i / 8;  // harmonic frequency
+        float amp = 1.0f / (i + 3); // your amplitude choice
 
         oscillators.push_back(Oscillator(freq, amp));  // uses move hopefully
     }
@@ -65,6 +79,36 @@ NOscillator::NOscillator(int size) {
 
 void SynthEngine::render() {
     ImGui::Begin("Synth Engine");
+    if (ImGui::Button("Refresh MIDI Mapping")) {
+        refreshMidiMapping();
+    }
+    // Display the current port name or a placeholder
+    const char* currentLabel = 
+        (currentMidiPort >= 0 && currentMidiPort < (int) midiMapping.size())
+            ? midiMapping[currentMidiPort].c_str()
+            : "<none>";
+
+    if (ImGui::BeginCombo("MIDI Input Port", currentLabel)) {
+        for (int i = 0; i < (int) midiMapping.size(); i++) {
+
+            bool is_selected = (i == currentMidiPort);
+
+            if (ImGui::Selectable(midiMapping[i].c_str(), is_selected)) {
+                currentMidiPort = i;
+
+                midiIn->closePort();
+                midiIn->openPort(i);
+                std::cout << "Opened MIDI port: " << midiMapping[i] << std::endl;
+            }
+
+            // Highlight the selected item
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
+    }
+
     ImGui::Text("Sample Rate: %.1f", sampleRate);
     float gainValue = gain.load();
     ImGui::SliderFloat("Gain", &gainValue, 0.0f, 1.0f);
@@ -77,6 +121,20 @@ void SynthEngine::render() {
     ImGui::EndChild();
 
     ImGui::End();
+}
+
+void SynthEngine::refreshMidiMapping() {
+    midiMapping.clear();
+    
+    unsigned int ports = midiIn->getPortCount();
+    if (ports == 0) {
+        std::cout << "No MIDI ports found!\n";
+        return;
+    }
+
+    for(unsigned int i = 0; i < ports; ++i) {
+        midiMapping.push_back(midiIn->getPortName(i));
+    }
 }
 
 void NOscillator::render() {
