@@ -2,3 +2,4 @@
 app/libs/imgui/
 **/bin/
 **/build/
+.venv/

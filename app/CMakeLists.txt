@@ -19,7 +19,6 @@ pkg_check_modules(RTMIDI REQUIRED rtmidi)
 set(SOURCE_FILES
     src/main.cpp
     engine/engine.cpp
-    engine/rolling_buffer.cpp
     engine/input.cpp
     audio/audio.cpp
     audio/synth_engine.cpp

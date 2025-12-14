@@ -25,3 +25,7 @@ This project is licensed under the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgments
 - imgui-knobs
+- ImGui
+- RtMidi & RtAudio
+- GLFW
+- OpenGL
