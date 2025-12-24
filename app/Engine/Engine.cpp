@@ -1,5 +1,5 @@
-#include "engine.hpp"
-#include "input.hpp"
+#include "Engine.hpp"
+#include "Input.hpp"
 
 #include <iostream>
 

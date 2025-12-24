@@ -1,11 +1,11 @@
 #pragma once
 
 #include "RtAudio.h"
-#include "synth_engine.hpp"
+#include "Synth.hpp"
 
 class Audio {
 public:
-    void init(SynthEngine* synthEngine);
+    void init(Synth* synth);
     void shutdown();
 
     static int audioCallback(

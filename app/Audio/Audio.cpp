@@ -1,10 +1,10 @@
-#include "audio.hpp"
+#include "Audio.hpp"
 
 #include "RtMidi.h"
 
 #include <cmath>
 
-void Audio::init(SynthEngine* synthEngine) {
+void Audio::init(Synth* synth) {
     RtAudio::StreamParameters outParams;
     outParams.deviceId = rtAudio.getDefaultOutputDevice();
     outParams.nChannels = 2;
@@ -19,7 +19,7 @@ void Audio::init(SynthEngine* synthEngine) {
             sampleRate,
             &bufferFrames,
             &Audio::audioCallback,
-            synthEngine //user data
+            synth //user data
         );
 
         rtAudio.startStream();
@@ -36,7 +36,7 @@ void Audio::init(SynthEngine* synthEngine) {
         midiIn.ignoreTypes(true, true, true);
 
         // Give the synth to the callback
-        midiIn.setCallback(&midiCallback, synthEngine);
+        midiIn.setCallback(&midiCallback, synth);
 
     } catch (RtMidiError &err) {
         err.printMessage();
@@ -44,7 +44,7 @@ void Audio::init(SynthEngine* synthEngine) {
 
     std::cout << "Midi Initialized." << std::endl;
 
-    synthEngine->midiIn = &midiIn;
+    synth->midiIn = &midiIn;
 }
 
 void Audio::shutdown() {
@@ -67,7 +67,7 @@ int Audio::audioCallback(
     }
 
     auto *buffer = static_cast<float *>(outputBuffer);
-    auto *synthEngine  = static_cast<SynthEngine *>(userData);
+    auto *synthEngine  = static_cast<Synth *>(userData);
 
     return synthEngine->process(buffer, nBufferFrames);
 }
@@ -77,7 +77,7 @@ void Audio::midiCallback(
     std::vector<unsigned char> *message,
     void *userData
 ) {
-    SynthEngine* synth = static_cast<SynthEngine*>(userData);
+    Synth* synth = static_cast<Synth*>(userData);
 
     if (message->size() < 3) return;
 

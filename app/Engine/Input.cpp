@@ -1,4 +1,4 @@
-#include "input.hpp"
+#include "Input.hpp"
 
 std::unordered_map<std::string, int> Input::keyBinds;
 std::unordered_map<int, bool> Input::currentState;

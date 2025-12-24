@@ -17,11 +17,15 @@ pkg_check_modules(RTMIDI REQUIRED rtmidi)
 #find_package(OpenAL REQUIRED)
 
 set(SOURCE_FILES
-    src/main.cpp
-    engine/engine.cpp
-    engine/input.cpp
-    audio/audio.cpp
-    audio/synth_engine.cpp
+    src/Main.cpp
+    Engine/Engine.cpp
+    Engine/Input.cpp
+    Audio/DSP/Oscillator.cpp
+    Audio/DSP/Voice.cpp
+    Audio/Instruments/Instrument.cpp
+    Audio/Instruments/NOscillator.cpp
+    Audio/Audio.cpp
+    Audio/Synth.cpp
 )
 
 set(IMGUI_SRC
@@ -46,9 +50,10 @@ target_include_directories(imgui PUBLIC
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-    engine/
-    audio/
-    src/simulation/
+    Engine/
+    Audio/
+    Audio/DSP/
+    Audio/Instruments/
     src/
     libs/
 )

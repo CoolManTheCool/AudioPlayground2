@@ -6,14 +6,14 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "engine.hpp"
-#include "input.hpp"
+#include "Engine.hpp"
+#include "Input.hpp"
 #include <cmath>
 #include <atomic>
 #include <iostream>
 #include <thread>
 
-#include "audio.hpp"
+#include "Audio.hpp"
 
 int main() {
     Input::bind("quit", GLFW_KEY_PAUSE);
@@ -21,9 +21,9 @@ int main() {
     Audio audio;
 
     // Allocate on heap to ensure it lives through the stream
-    SynthEngine synthEngine = SynthEngine();
+    Synth synth = Synth();
 
-    audio.init(&synthEngine);
+    audio.init(&synth);
 
     while(!Engine.shouldClose()) {
         FrameContext ctx = Engine.beginFrame();
@@ -57,7 +57,7 @@ int main() {
         ImGui::Text("Height: %d", ctx.height);
         ImGui::End();
 
-        synthEngine.render();
+        synth.render();
 
         // Do stuff
 

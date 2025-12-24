@@ -8,7 +8,7 @@ STEP_DURATION = 0.001
 NUM_STEPS = 12
 NUM_OCTAVES = 1
 
-BASE_NOTE = 53  # F3
+BASE_NOTE = 53  # F3 = 53, C4 = 60
 
 # MIDI → note name
 NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F",
@@ -16,19 +16,21 @@ NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F",
 
 # keyboard → semitone offset (F-based layout)
 KEY_MAP = {
-    "a": 0,    # F
-    "w": 1,    # F#
-    "s": 2,    # G
-    "e": 3,    # G#
-    "d": 4,    # A
-    "r": 5,    # A#
-    "f": 6,    # B
-    "g": 7,    # C
-    "y": 8,    # C#
-    "h": 9,    # D
-    "u": 10,   # D#
-    "j": 11,   # E
-    "k": 12    # F (next octave)
+    "a": 0,
+    "w": 1,
+    "s": 2,
+    "e": 3,
+    "d": 4,
+    "r": 5,
+    "f": 6,
+    "g": 7,  # C
+    "y": 8,
+    "h": 9,
+    "u": 10,
+    "j": 11, # E
+    "k": 12, # F (octave up)
+    "o": 13, # F#
+    "l": 14  # G 
 }
 
 
