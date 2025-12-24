@@ -67,13 +67,15 @@ int Audio::audioCallback(
     }
 
     auto *buffer = static_cast<float *>(outputBuffer);
-    auto *synthEngine  = static_cast<Synth *>(userData);
+    auto *synth  = static_cast<Synth *>(userData);
 
-    return synthEngine->process(buffer, nBufferFrames);
+    synth->process(buffer, nBufferFrames);
+
+    return 0;
 }
 
 void Audio::midiCallback(
-    double timeStamp,
+    double /*timeStamp*/,
     std::vector<unsigned char> *message,
     void *userData
 ) {

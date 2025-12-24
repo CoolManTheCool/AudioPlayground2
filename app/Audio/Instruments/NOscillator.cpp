@@ -17,7 +17,7 @@ NOscillator::NOscillator(int size) {
         oscillators.push_back(Oscillator(freq, amp));  // uses move hopefully
     }
 
-    for(int i = 0; i < 12; ++i) {
+    for(int i = 0; i < 30; ++i) {
         voices.push_back(new NOscillatorVoice(oscillators));
     }
 }
@@ -30,7 +30,7 @@ float NOscillator::process() {
     for (auto& voice : voices) {
         mixedSample += voice->process();
     }
-    //mixedSample /= static_cast<float>(oscillators.size()); // Normalize
+    //mixedSample /= static_cast<float>(voices.size()); // Normalize
     return mixedSample * gain.load(RELAXED);
 }
 
@@ -77,7 +77,9 @@ NOscillatorVoice::NOscillatorVoice(
 }
 
 float NOscillatorVoice::process() {
-    if(active == false) {
+    float envelopeAmp = envelope.update();
+
+    if(envelope.stage == ADSR_Envelope::Stage::Idle) {
         return 0.0f;
     }
     float mixedSample = 0.0f;
@@ -87,7 +89,7 @@ float NOscillatorVoice::process() {
         ++index;
     }
     //mixedSample /= static_cast<float>(oscillators.size()); // Normalize
-    return mixedSample * velocity;
+    return mixedSample * envelopeAmp;
 }
 
 void NOscillatorVoice::startNote(int note, int velocity) {

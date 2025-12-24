@@ -6,17 +6,17 @@
 #include "imgui.h"
 #include "imgui-knobs.hpp"
 
-int Synth::process(float* out, unsigned int nFrames) {
+void Synth::process(float* out, unsigned int nFrames) {
 
     for (unsigned int i = 0; i < nFrames; i++) {
 
         float sample = nOscillator.process();
 
+        debugBuffer.push(sample);
+
         out[i * 2 + 0] = sample * gain.load(RELAXED); // L
         out[i * 2 + 1] = sample * gain.load(RELAXED); // R
     }
-
-    return 0;
 };
 
 void Synth::noteOn(int midiNote, float velocity) {
@@ -69,6 +69,10 @@ void Synth::render() {
     ImGui::Separator();
 
     ImGui::EndChild();
+
+    std::vector<float> waveform;
+    debugBuffer.getSnapshot(waveform);
+    ImGui::PlotLines("Debug Waveform", waveform.data(), static_cast<int>(waveform.size()), 0, nullptr, -1.0f, 1.0f, ImVec2(0, 100));
 
     ImGui::End();
 }

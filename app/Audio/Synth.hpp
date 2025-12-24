@@ -11,13 +11,32 @@
 
 #define RELAXED std::memory_order_relaxed
 
+struct DebugBuffer {
+    std::vector<float> buffer;
+    std::atomic<size_t> writeIndex{0};
+
+    DebugBuffer(size_t size) : buffer(size) {}
+
+    void push(float value) {
+        buffer[writeIndex++ % buffer.size()] = value;
+    }
+
+    void getSnapshot(std::vector<float>& out) {
+        size_t idx = writeIndex.load();
+        out.resize(buffer.size());
+        for (size_t i = 0; i < buffer.size(); ++i)
+            out[i] = buffer[(idx + i) % buffer.size()];
+    }
+};
+
 struct Synth {
     float sampleRate = 48000.0f;
     std::atomic<float> gain = 0.5f;
 
-    NOscillator nOscillator{3};
+    NOscillator nOscillator{1};
+    DebugBuffer debugBuffer{48000/256};
 
-    int process(float* out, unsigned int nFrames);
+    void process(float* out, unsigned int nFrames);
 
     void noteOn(int midiNote, float velocity);
 

@@ -4,9 +4,9 @@ import threading
 import tkinter as tk
 import math
 
-STEP_DURATION = 0.001
+STEP_DURATION = 0.2
 NUM_STEPS = 12
-NUM_OCTAVES = 1
+NUM_OCTAVES = 10
 
 BASE_NOTE = 53  # F3 = 53, C4 = 60
 
