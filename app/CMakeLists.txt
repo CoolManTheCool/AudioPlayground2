@@ -1,7 +1,7 @@
 set(PROJECT_NAME "AudioPlayground2")
 
-cmake_minimum_required(VERSION 4.0.1)
-project(${PROJECT_NAME} VERSION 0.0.1 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.27.8)
+project(${PROJECT_NAME})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../bin)
 
