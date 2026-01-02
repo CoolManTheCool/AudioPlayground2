@@ -7,7 +7,7 @@
 
 #include "NOscillator.hpp"
 
-#include "RtMidi.h"
+#include "rtmidi/RtMidi.h"
 
 #define RELAXED std::memory_order_relaxed
 

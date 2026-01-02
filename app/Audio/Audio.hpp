@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RtAudio.h"
+#include "rtaudio/RtAudio.h"
 #include "Synth.hpp"
 
 class Audio {

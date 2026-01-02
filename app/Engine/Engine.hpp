@@ -33,6 +33,7 @@ public:
     size_t getIndex() const {
         return index;
     }
+
 private:
     size_t size;
     size_t index;
@@ -54,24 +55,26 @@ public:
     void endFrame();
 
     void destroy();
+
+    // ImGui pointers
+    ImGuiIO* io = nullptr;
+    ImGuiStyle* style = nullptr;
+
 private:
     static void glfwErrorCallback(int error, const char* description);
 
     void onFailure(const char* message, bool fatal = true) {
         std::cerr << "Error: " << message << std::endl;
-        if(fatal) abort();
+        if (fatal) abort();
     }
 
-    GLFWwindow* window;
-    ImGuiIO& io;
-    ImGuiStyle& style;
-
+    GLFWwindow* window = nullptr;
     double lastTime = 0.0;
 
     std::vector<double> frameTimes;
     size_t frameTimeIndex = 0; // Circular buffer index
 };
 
-extern Engine_T Engine;
+extern Engine_T* Engine;
 
 #endif // ENGINE_HPP

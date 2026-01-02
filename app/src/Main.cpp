@@ -16,6 +16,10 @@
 #include "Audio.hpp"
 
 int main() {
+    Engine_T lEngine;
+
+    Engine = &lEngine;
+
     Input::bind("quit", GLFW_KEY_PAUSE);
 
     Audio audio;
@@ -25,16 +29,16 @@ int main() {
 
     audio.init(&synth);
 
-    while(!Engine.shouldClose()) {
-        FrameContext ctx = Engine.beginFrame();
+    while(!Engine->shouldClose()) {
+        FrameContext ctx = Engine->beginFrame();
 
         if(Input::isDown("quit")) {
             std::cout << "Break key was pressed, exiting." << std::endl;
-            Engine.setShouldClose(true);
+            Engine->setShouldClose(true);
         }
 
         double avDeltaTime;
-        const std::vector<double>& frameTimes = Engine.getFrameTimes();
+        const std::vector<double>& frameTimes = Engine->getFrameTimes();
         for (const double& frameTime : frameTimes) {
             avDeltaTime += frameTime;
         }
@@ -42,7 +46,7 @@ int main() {
 
         size_t count = frameTimes.size();
         float* frameTimesData = new float[count];
-        size_t startIndex = Engine.getFrameTimeIndex();
+        size_t startIndex = Engine->getFrameTimeIndex();
 
         for (size_t i = 0; i < count; ++i) {
             size_t index = (startIndex + i) % count;
@@ -52,7 +56,7 @@ int main() {
         ImGui::Begin("Debug");
         ImGui::Text("FPS: %.1f", 1.0f / avDeltaTime);
         ImGui::PlotLines("Frame Times", frameTimesData, frameTimes.size(), 0, nullptr, 0.0f, 0.1f, ImVec2(0, 80));
-        //ImGui::PlotLines("Audio Buffer", synthEngine.buffer.load(std::memory_order_relaxed), static_cast<int>(synthEngine.bufferSize.load(std::memory_order_relaxed)), 0, nullptr, -1.0f, 1.0f, ImVec2(0, 80));
+        //ImGui::PlotLines("Audio Buffer", synthEngine->buffer.load(std::memory_order_relaxed), static_cast<int>(synthEngine->bufferSize.load(std::memory_order_relaxed)), 0, nullptr, -1.0f, 1.0f, ImVec2(0, 80));
         ImGui::Text("Width: %d", ctx.width);
         ImGui::Text("Height: %d", ctx.height);
         ImGui::End();
@@ -61,7 +65,7 @@ int main() {
 
         // Do stuff
 
-        Engine.endFrame();
+        Engine->endFrame();
     }
 
     return 0;
