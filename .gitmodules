@@ -2,3 +2,9 @@
 	path = app/libs/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "app/libs/rtaudio"]
+	path = app/libs/rtaudio
+	url = https://github.com/thestk/rtaudio.git
+[submodule "app/libs/rtmidi"]
+	path = app/libs/rtmidi
+	url = https://github.com/thestk/rtmidi.git
