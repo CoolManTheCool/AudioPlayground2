@@ -19,14 +19,18 @@ enum class Waveform {
     COUNT
 };
 
+constexpr int NUM_WAVEFORMS = static_cast<int>(Waveform::COUNT);
+
 std::string waveformToString(Waveform waveform);
 
 class Oscillator {
 public:
-    Oscillator(float gain);
-    std::atomic<float> offset;
+    Oscillator(Waveform waveform, float gain);
+    std::atomic<int> offset{0};
     std::atomic<float> gain;
-    std::atomic<Waveform> waveform;
+    std::atomic<size_t> waveform;
+
+    Waveform getWafeform() const;
 
     float process(float frequency, float& phase);
 

@@ -9,7 +9,7 @@ NOscillator::NOscillator(int size) {
 
     oscillators.reserve(size);
     for (int i = 0; i < size; ++i) {
-        oscillators.push_back(Oscillator(1.0f/(float) size));
+        oscillators.push_back(Oscillator(Waveform::SAW, 1.0f / (float) size));
     }
 
     for(int i = 0; i < 30; ++i) {
