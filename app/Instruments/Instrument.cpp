@@ -1,5 +1,17 @@
 #include "Instrument.hpp"
 
+#include <iostream>
+
+void Instrument::panic() {
+    for (auto& voice : voices) {
+        std::cout << "Stopping voice..." << std::endl;
+        voice->panic();
+    }
+    activeNotes.clear();
+
+    std::cout << "Panic: All notes off!" << std::endl;
+}
+
 void Instrument::startNote(int note, int velocity) {
     if (voices.empty()) return;
 
@@ -18,6 +30,6 @@ void Instrument::stopNote(int note) {
     auto it = activeNotes.find(note);
     if (it != activeNotes.end()) {
         it->second->stopNote();
-        activeNotes.erase(it);
+        //activeNotes.erase(it);
     }
 }

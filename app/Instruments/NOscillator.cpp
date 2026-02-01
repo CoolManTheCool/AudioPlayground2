@@ -13,7 +13,7 @@ NOscillator::NOscillator(int size) {
     }
 
     for(int i = 0; i < 30; ++i) {
-        voices.push_back(new NOscillatorVoice(oscillators));
+        voices.push_back(new NOscillatorVoice(envelope, oscillators));
     }
 }
 
@@ -47,6 +47,11 @@ void NOscillator::render() {
 
     if (editing) {
         ImGui::Begin("NOscillator Editor");
+        float gainValue = gain.load();
+        ImGuiKnobs::Knob("Gain", &gainValue, 0.0f, 1.0f, 0.0f, "%.3f %", ImGuiKnobVariant_Tick, 40.0f);
+        gain.store(gainValue, RELAXED);
+        ImGui::SameLine();
+        envelope.render();
         for(size_t i = 0; i < oscillators.size(); ++i) {
             ImGui::PushID(static_cast<int>(i));
             ImGui::Text("Oscillator %zu", i);
@@ -59,16 +64,16 @@ void NOscillator::render() {
     
 }
 
-NOscillatorVoice::NOscillatorVoice(
-    std::vector<Oscillator>& oscillators
-) : oscillators(oscillators) {
+NOscillatorVoice::NOscillatorVoice(ADSR_Envelope& env, std::vector<Oscillator>& oscillators)
+: Voice(env), oscillators(oscillators) {
+
     phases.resize(oscillators.size(), 0.0f);
 }
 
 float NOscillatorVoice::process() {
-    float envelopeAmp = envelope.update();
+    float envelopeAmp = envelope.update(state);
 
-    if(envelope.stage == ADSR_Envelope::Stage::Idle) {
+    if(state.stage == ADSR_Envelope::Stage::Idle) {
         return 0.0f;
     }
     float mixedSample = 0.0f;

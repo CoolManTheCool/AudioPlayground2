@@ -19,7 +19,7 @@ private:
 
 class NOscillatorVoice : public Voice {
 public:
-    NOscillatorVoice(std::vector<Oscillator>& oscillators);
+    NOscillatorVoice(ADSR_Envelope& env, std::vector<Oscillator>& oscillators);
     void startNote(int note, int velocity) override;
     float process() override;
 private:

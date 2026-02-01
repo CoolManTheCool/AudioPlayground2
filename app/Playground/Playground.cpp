@@ -41,5 +41,9 @@ void Playground::render() {
     debugBuffer.getSnapshot(waveform);
     ImGui::PlotLines("Debug Waveform", waveform.data(), static_cast<int>(waveform.size()), 0, nullptr, -1.0f, 1.0f, ImVec2(0, 100));
 
+    if(ImGui::Button("Panic")) {
+        nOscillator.panic();
+    }
+
     ImGui::End();
 }

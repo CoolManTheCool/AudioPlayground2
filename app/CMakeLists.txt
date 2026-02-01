@@ -28,21 +28,24 @@ target_include_directories(imgui-knobs PUBLIC
 
 set(SOURCE_FILES
     src/main.cpp
-    Audio/DSP/Oscillator.cpp
-    Audio/DSP/Voice.cpp
-    Audio/Instruments/Instrument.cpp
-    Audio/Instruments/NOscillator.cpp
-    Audio/Audio.cpp
-    Audio/Playground.cpp
+    DSP/Oscillator.cpp
+    DSP/Voice.cpp
+    DSP/Envelope.cpp
+    Instruments/Instrument.cpp
+    Instruments/NOscillator.cpp
+    Playground/Audio.cpp
+    Playground/Playground.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-    Audio/
-    Audio/DSP/
-    Audio/Instruments/
+    Instruments/
+    Playground/
+    DSP/
+    Utility/
     src/
+
     libs/
     libs/rtaudio/include
     libs/rtmidi

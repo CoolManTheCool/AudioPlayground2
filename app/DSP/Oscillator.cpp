@@ -6,10 +6,8 @@
 #include "imgui-knobs.hpp"
 #include "Pitch.hpp"
 
-Oscillator::Oscillator(Waveform waveform, float gain) {
-    this->gain.store(gain, RELAXED);
-    this->waveform.store(static_cast<size_t>(waveform), RELAXED);
-}
+Oscillator::Oscillator(Waveform wf, float g)
+    : gain(g), waveform(static_cast<size_t>(wf)) {}
 
 Waveform Oscillator::getWafeform() const {
     return static_cast<Waveform>(waveform.load(RELAXED));
@@ -27,7 +25,7 @@ float Oscillator::process(float frequency, float& phase) {
 
     switch(getWafeform()) {
     case Waveform::SINE:
-        sample = std::sin(2.0f * M_PI * phase) * g;
+        sample = std::sin(2.0f * M_PI * phase);
         break;
     case Waveform::SQUARE:
         sample = (std::fmod(std::floor(2.0 * phase), 2.0) * 2.0) - 1.0;
@@ -45,36 +43,37 @@ float Oscillator::process(float frequency, float& phase) {
     phase += freq / 48000.0f;
     if (phase >= 1.0f) phase -= 1.0f;
 
-    return sample;
+    return sample * g;
 }
 
 void Oscillator::render() {
-    int offsetVal = offset.load(RELAXED);
-    ImGuiKnobs::KnobInt("Offset", &offsetVal, -24, 24, 0.0f, "%i", ImGuiKnobVariant_Tick, 35.0f);
-    offset.store(offsetVal, RELAXED);
+    int offsetVal = offset.load(std::memory_order_relaxed);
+    if (ImGuiKnobs::KnobInt("Offset", &offsetVal, -24, 24, 0.0f, "%i", ImGuiKnobVariant_Tick, 35.0f)) {
+        offset.store(offsetVal, std::memory_order_relaxed);
+    }
     ImGui::SameLine();
 
-    float gainValue = gain.load(RELAXED);
-    ImGuiKnobs::Knob("Gain", &gainValue, 0.0f, 1.0f, 0.0f, "%.3f %", ImGuiKnobVariant_Tick, 35.0f);
-    gain.store(gainValue, RELAXED);
+    float gainValue = gain.load(std::memory_order_relaxed);
+    if (ImGuiKnobs::Knob("Gain", &gainValue, 0.0f, 1.0f, 0.0f, "%.3f %", ImGuiKnobVariant_Tick, 35.0f)) {
+        gain.store(gainValue, std::memory_order_relaxed);
+    }
     ImGui::SameLine();
 
-    Waveform wf = getWafeform();
+    Waveform wf = static_cast<Waveform>(waveform.load(std::memory_order_relaxed));
     std::string wfString = waveformToString(wf);
 
-
     if (ImGui::BeginCombo("##Waveform", wfString.c_str())) {
-        for (int i = 0; i < (int) Waveform::COUNT; i++) {
-
+        for (int i = 0; i < static_cast<int>(Waveform::COUNT); i++) {
             bool is_selected = (i == static_cast<int>(wf));
 
-            if (ImGui::Selectable(waveformToString(static_cast<Waveform>(i)).c_str(), is_selected))
-                waveform.store(i, RELAXED);
+            if (ImGui::Selectable(waveformToString(static_cast<Waveform>(i)).c_str(), is_selected)) {
+                waveform.store(i, std::memory_order_relaxed);
+                wf = static_cast<Waveform>(i);
+            }
 
             if (is_selected)
                 ImGui::SetItemDefaultFocus();
         }
-
         ImGui::EndCombo();
     }
 }

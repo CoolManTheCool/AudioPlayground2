@@ -5,16 +5,19 @@
 void Voice::startNote(int note, int velocity) {
     this->frequency = noteNumberToPitch(note);
     this->velocity = getAmplitude(velocity);
-    envelope.noteOn();
+    envelope.noteOn(state);
 }
 
 void Voice::stopNote() {
-    envelope.targetAmp = 0.0f;
-    envelope.noteOff();
+    envelope.noteOff(state);
 }
 
 bool Voice::isActive() const {
-    return envelope.stage != ADSR_Envelope::Stage::Idle;
+    return state.stage != ADSR_Envelope::Stage::Idle;
+}
+
+void Voice::panic() {
+    envelope.panic(state);
 }
 
 float noteNumberToPitch(int note) {
