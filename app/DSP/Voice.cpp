@@ -22,7 +22,8 @@ void Voice::panic() {
 
 float noteNumberToPitch(int note) {
     #if EQUAL_TEMPERAMENT
-    return 440.0f * std::pow(2.0f, (note - 69) / 12.0f);
+    return 440.0f * std::pow(2.0f, (note - 57) / 12.0f);
+    // Going down an octave because my midi keyboard is odd like that
     #else
     // Just intonation approximation for demonstration
     static const float justIntonationRatios[12] = {

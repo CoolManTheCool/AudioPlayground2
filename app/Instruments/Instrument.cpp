@@ -4,12 +4,9 @@
 
 void Instrument::panic() {
     for (auto& voice : voices) {
-        std::cout << "Stopping voice..." << std::endl;
         voice->panic();
     }
     activeNotes.clear();
-
-    std::cout << "Panic: All notes off!" << std::endl;
 }
 
 void Instrument::startNote(int note, int velocity) {
